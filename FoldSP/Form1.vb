@@ -2,38 +2,50 @@
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LinkLabelSP.Text = ""
+        Me.Height = 125
+        'txb_NumSP.
     End Sub
 
     Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles txb_NumSP.TextChanged
+        Me.AcceptButton = Button1
         If Me.txb_NumSP.Text = "" Then
             Me.Button1.Enabled = False
         Else
-            'If IsNumeric(sender.text) Then
-            '    Me.txb_NumSP.Tag = Me.txb_NumSP.Text
-            'Else
-            '    Me.txb_NumSP.Text = Me.txb_NumSP.Tag
-            'End If
-
             Me.Button1.Enabled = True
-            End If
+        End If
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        'todo добавить поиск папки по номеру СП
         'todo добавить обработку нескольких найденных папок
-        LinkLabelSP.Text = txb_NumSP.Text
-        LinkLabelSP.Tag = "E:\Работа\Спецзаказы\!Стандартные\ТП АСН-100-09-Э-03.78 НЖ"
         'todo создать в параметрах пути папок
-        LinkLabelSP.Text = ПолучениеИмениПапкиWork()
+        LinkLabelSP.Text = "Производится поиск папки..."
+        Me.Button1.Visible = False
+        Me.txb_NumSP.Enabled = False
+        LinkLabelSP.Text = txb_NumSP.Text
+        'LinkLabelSP.Tag = ПоискПапкиWork(sPathFoldSP, "*" & txb_NumSP.Text & "*")
+        sFoldMass = IO.Directory.GetDirectories(sPathFoldSP, "*" & txb_NumSP.Text & "*", IO.SearchOption.TopDirectoryOnly)
+        If sFoldMass Is Nothing Then
+            LinkLabelSP.Text = ПолучениеИмениПапкиWork(sPathFoldSP)
+        Else
+            Me.Height = 270
+            If sFoldMass.Length = 1 Then
+                LinkLabelSP.Tag = sFoldMass(0)
+                LinkLabelSP.Text = IO.Path.GetFileName(LinkLabelSP.Tag)
+            Else
+                DialogFolds.ShowDialog()
+                'MessageBox(DialogFolds.DialogResult.ToString)
+            End If
+        End If
+        txb_FoldOP.Text = Me.LinkLabelSP.Text
     End Sub
 
     Private Sub LinkLabelSP_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabelSP.LinkClicked
-        Shell("explorer.exe " & LinkLabelSP.Tag, vbNormalFocus)
+        Shell("explorer.exe " & Chr(34) & LinkLabelSP.Tag & Chr(34), vbNormalFocus)
     End Sub
 
     Private Sub txb_NumSP_Enter(sender As Object, e As EventArgs) Handles txb_NumSP.Enter
         If txb_NumSP.Text = "" Then txb_NumSP.Text = "" : Exit Sub
-        'If txb_SP.Text Like "*[!0-9]*" Then txb_SP.Text = txb_SP.Tag Else : txb_SP.Tag = txb_SP.Text
+        If txb_NumSP.Text Like "*[!0-9]*" Then txb_NumSP.Text = txb_NumSP.Tag Else : txb_NumSP.Tag = txb_NumSP.Text
         'txb_SPFolder.Text = ПоискПапкиWork("\\Localserver\общие документы\Документация СП\Предзаказ\2018")
         'If txb_SPFolder.Text = "" Then txb_SPFolder.Text = ПолучениеИмениПапкиWork("\\Localserver\общие документы\Документация СП\Предзаказ\2018")
         'txb_SP.Tag = ""
@@ -63,9 +75,12 @@
         ' функция выводит диалоговое окно выбора папки с заголовком Title,
         ' начиная обзор диска с папки InitialPath
         ' возвращает полный путь к выбранной папке, или пустую строку в случае отказа от выбора
+
+
+        Dim FBD As New FolderBrowserDialog With {.SelectedPath = Application.StartupPath}
+        If FBD.ShowDialog = Windows.Forms.DialogResult.OK Then MsgBox(FBD.SelectedPath)
         If Title = "" Then Title = "Выберите папку"
-        'Dim PS As String : PS = PathSeparator
-        FBD.RootFolder = Environment.SpecialFolder.ProgramFiles ' Указываем начальную папку(указывать можно только определенные папки(в нашем случае Programm Files))
+        FBD.SelectedPath = InitialPath 'Environment.SpecialFolder.ProgramFiles ' Указываем начальную папку(указывать можно только определенные папки(в нашем случае Programm Files))
         If FBD.ShowDialog = DialogResult.OK Then MsgBox(FBD.SelectedPath) '
         ПолучениеИмениПапкиWork = FBD.SelectedPath
         If Not ПолучениеИмениПапкиWork.EndsWith(IO.Path.PathSeparator) Then ПолучениеИмениПапкиWork &= IO.Path.PathSeparator
@@ -78,33 +93,31 @@
         ExistDir = (Dir(DirName, vbDirectory) <> "") 'Собственно, ответ на интересующий вопрос
     End Function
 
-    'Private Function ПоискПапкиWork(sFold As String = "") As String
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        MessageBox.Show("в ОП")
+    End Sub
+
+    'Private Function ПоискПапкиWork(Optional sFold As String = "", Optional sMask As String = "*") As String
     '    LinkLabelSP.Text = "Производится поиск папки..."
-    '    Dim FSO, SubFolder, sFolds, tsOut, fFolder, iii
-    '    iii = -1
-    '    FSO = CreateObject("Scripting.FileSystemObject")   'Создаем объект FileSystemObject
-    '    fFolder = FSO.GetFolder(sFold)   'Путь к корневому каталогу
-    '    For Each SubFolder In fFolder.SubFolders   'Цикл по всем подкаталогам
-    '        If InStr(SubFolder.Name, txb_SP.Text) <> 0 Then
-    '            iii = iii + 1 : DoEvents
-    '            If iii = 0 Then ReDim NajdennyePapki(iii) Else ReDim Preserve NajdennyePapki(iii)
-    '            NajdennyePapki(iii) = SubFolder.Name
-    '        End If
-    '    Next
-    '    '   MsgBox (333)
-    '    If iii > -1 Then
-    '        Dim f As Object, S, jjj, Star6ajaData, Star6ijNomer
-    '        Star6ajaData = 0 : Star6ijNomer = 0
-    '        For jjj = 0 To iii
-    '     Set f = FSO.GetFolder(sFold & "\" & NajdennyePapki(jjj))
-    '     S = f.DateCreated : DoEvents
-    '            If S > Star6ajaData Or Star6ajaData = 0 Then
-    '                Star6ajaData = S : Star6ijNomer = jjj
-    '            End If
-    '        Next
-    '        ПоискПапкиWork = NajdennyePapki(Star6ijNomer)
+    '    'MsgBox(FolderSelectDialog.Show(Me.Handle, "C:\", "Выберите папку").FileName)
+    '    sFoldMass = IO.Directory.GetDirectories(sFold, sMask, IO.SearchOption.TopDirectoryOnly)
+    '    If sFoldMass.Length > 1 Then
+    '        DialogFolds.Show()
+    '        'Return ВыборОднойПапки(sFoldMass)
+    '    Else
+    '        Return sFoldMass(0)
     '    End If
     'End Function
 
+    'Private Function ВыборОднойПапки(sFoldMass())
+    '    '15; 100
+    '    Dim iii As Integer
+    '    Me.GroupBox1.Location = New Point(15, 100)
+    '    For iii = 1 To sFoldMass.Length
+    '        Me.Controls.Item("GroupBox1").Controls.Item("LinkLabelGB" & iii).Visible = True
+    '        Me.Controls.Item("GroupBox1").Controls.Item("LinkLabelGB" & iii).Tag = sFoldMass(iii - 1)
+    '        Me.Controls.Item("GroupBox1").Controls.Item("LinkLabelGB" & iii).Text = IO.Path.GetFileName(sFoldMass(iii - 1))
+    '    Next 'cel
+    'End Function
 
 End Class
