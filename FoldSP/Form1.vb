@@ -1,6 +1,11 @@
-﻿Public Class Form1
+﻿Imports IWshRuntimeLibrary
+Public Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        sPathFoldSP = My.Settings.PathFoldSP & "\" & Format(Now, "yyyy")
+        sPathFoldOP = My.Settings.PathFoldOP
+        sPathFoldKO = My.Settings.PathFoldKO
+
         LinkLabelSP.Text = ""
         Me.Height = 125
         'txb_NumSP.
@@ -96,6 +101,32 @@
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         MessageBox.Show("в ОП")
     End Sub
+
+    '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    Private Sub rm_Load()
+        Dim FileDir As String = FileIO.FileSystem.GetFileInfo(LinkLabelSP.Tag).DirectoryName
+        Dim WshShell = CreateObject("WScript.Shell")
+        'Dim strDesktop = WshShell.SpecialFolders("Desktop") 'переменная strDesktop будет равна пути до рабочего стола будь то путь в windows 7 (C:\Users\Имя пользователя\Desktop) или в windows xp (C:\Documents and settings\Имя пользователя\Рабочий стол)
+        'Dim oShellLink = WshShell.CreateShortcut(strDesktop & "\название ярлыка.lnk")  'кто не знает то у ярлыков формат lnk
+        Dim strDesktop = "\\Localserver\общие документы\Документация СП\Предзаказ\2018\СП-1319,Сарметаллстрой" 'переменная strDesktop будет равна пути до рабочего стола будь то путь в windows 7 (C:\Users\Имя пользователя\Desktop) или в windows xp (C:\Documents and settings\Имя пользователя\Рабочий стол)
+        Dim oShellLink = WshShell.CreateShortcut(FileDir & "\название ярлыка.lnk")  'кто не знает то у ярлыков формат lnk
+        oShellLink.TargetPath = "\\Localserver\общие документы\Документация СП\Распоряжение от ОП"
+        oShellLink.WindowStyle = 1
+        oShellLink.IconLocation = "путь к картинке которая будет на ярлыке"
+        oShellLink.Description = "подсказка которая будет отображатся при наведении на курсор"
+        oShellLink.WorkingDirectory = "путь к рабочей папке в которой лежит exe"
+        oShellLink.Save 'создать ярлык
+    End Sub
+    Sub CreateShortcut()
+        'slPath = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), Application.ExecutablePath)
+        'Dim shell As New WshShell
+        'Dim link As IWshShortcut = shell.CreateShortcut(slPath)
+        'link.TargetPath = Application.ExecutablePath
+        'link.WorkingDirectory = Application.StartupPath
+        'link.Save()
+    End Sub
+
+
 
     'Private Function ПоискПапкиWork(Optional sFold As String = "", Optional sMask As String = "*") As String
     '    LinkLabelSP.Text = "Производится поиск папки..."

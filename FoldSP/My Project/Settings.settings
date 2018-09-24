@@ -1,7 +1,15 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" UseMySettingsClassName="true">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="PathFoldSP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\Localserver\общие документы\Документация СП\Предзаказ</Value>
+    </Setting>
+    <Setting Name="PathFoldOP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\Localserver\общие документы\Документация СП\Распоряжение от ОП</Value>
+    </Setting>
+    <Setting Name="PathFoldKO" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\Localserver\общие документы\Документация СП\Распоряжения от КО</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
